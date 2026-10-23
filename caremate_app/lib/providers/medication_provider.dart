@@ -280,11 +280,12 @@ class MedicationProvider extends ChangeNotifier {
       _medications[idx] = med;
       await _storageService.saveMedications(_medications);
 
-      // Synchronize active and future scheduled dose events with updated name, dosage, and slot
+      // Strict Safety Rule: Synchronize ONLY future pending scheduled dose events.
+      // NEVER silently rewrite in-flight commands (commandSent) or executed states
+      // (dispenseConfirmed, acknowledged, failed, unknown) to prevent audit-physical discrepancies.
       for (int i = 0; i < _doseHistory.length; i++) {
         if (_doseHistory[i].medicationId == med.id &&
-            (_doseHistory[i].status == DoseStatus.scheduled ||
-             _doseHistory[i].status == DoseStatus.commandSent)) {
+            _doseHistory[i].status == DoseStatus.scheduled) {
           _doseHistory[i] = _doseHistory[i].copyWith(
             medicationName: med.name,
             dosage: med.dosage,
