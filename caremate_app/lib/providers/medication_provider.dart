@@ -31,16 +31,62 @@ class MedicationProvider extends ChangeNotifier {
       _medications = await _storageService.loadMedications();
       final loadedDoses = await _storageService.loadDoseHistory();
 
-      // Event Deduplication: Ensure unique primary keys across app restarts & persistent storage
-      final Map<String, DoseEvent> uniqueMap = {};
+      // Deterministic Event Reconciliation:
+      // When duplicate IDs are encountered across restarts or syncs,
+      // preserve the most trustworthy state according to strict clinical progress rank.
+      final Map<String, DoseEvent> reconciledMap = {};
       for (final dose in loadedDoses) {
-        uniqueMap[dose.id] = dose;
+        if (!reconciledMap.containsKey(dose.id)) {
+          reconciledMap[dose.id] = dose;
+        } else {
+          final existing = reconciledMap[dose.id]!;
+          reconciledMap[dose.id] = _reconcileDoseEvents(existing, dose);
+        }
       }
-      _doseHistory = uniqueMap.values.toList();
+      _doseHistory = reconciledMap.values.toList();
       _sortDoses();
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // State-Ranking: higher rank represents a more advanced / trustworthy confirmed clinical state
+  static int _statusRank(DoseStatus status) {
+    switch (status) {
+      case DoseStatus.acknowledged:
+        return 5;
+      case DoseStatus.dispenseConfirmed:
+        return 4;
+      case DoseStatus.failed:
+        return 3;
+      case DoseStatus.unknown:
+        return 2;
+      case DoseStatus.commandSent:
+        return 1;
+      case DoseStatus.scheduled:
+        return 0;
+    }
+  }
+
+  static DoseEvent _reconcileDoseEvents(DoseEvent a, DoseEvent b) {
+    final rankA = _statusRank(a.status);
+    final rankB = _statusRank(b.status);
+
+    if (rankB > rankA) {
+      // b has a more advanced state; preserve b, but retain any earlier timestamps from a if b lacks them
+      return b.copyWith(
+        commandSentTime: b.commandSentTime ?? a.commandSentTime,
+        dispensedTime: b.dispensedTime ?? a.dispensedTime,
+        acknowledgedTime: b.acknowledgedTime ?? a.acknowledgedTime,
+      );
+    } else {
+      // a has equal or higher rank; retain a, filling any missing timestamps from b
+      return a.copyWith(
+        commandSentTime: a.commandSentTime ?? b.commandSentTime,
+        dispensedTime: a.dispensedTime ?? b.dispensedTime,
+        acknowledgedTime: a.acknowledgedTime ?? b.acknowledgedTime,
+      );
     }
   }
 
@@ -133,13 +179,15 @@ class MedicationProvider extends ChangeNotifier {
       if (d.medicationId != med.id) return false;
       if (d.status == DoseStatus.commandSent) return true;
       if (d.status == DoseStatus.dispenseConfirmed && d.dispensedTime != null) {
-        // Guard against double dispensing within 45 minutes
+        // Guard against double dispensing within 45 minutes of a verified drop
         return now.difference(d.dispensedTime!).inMinutes < 45;
       }
       if (d.status == DoseStatus.unknown) {
-        // Strict Hardware Rule: Never retry a potentially completed dispense blindly.
-        // Ambiguous timeout requires manual human inspection.
-        return now.difference(d.scheduledTime).inMinutes < 45;
+        // Strict Hardware Safety Invariant:
+        // A dispense with an UNKNOWN outcome is NEVER automatically unblocked by time alone!
+        // It remains locked indefinitely until caregiver/patient manually verifies the tray
+        // and reconciles the dose (via acknowledgeDose or manual clearance).
+        return true;
       }
       return false;
     }).toList();
@@ -147,7 +195,7 @@ class MedicationProvider extends ChangeNotifier {
     if (ambiguousOrRecent.isNotEmpty) {
       final hasUnknown = ambiguousOrRecent.any((d) => d.status == DoseStatus.unknown);
       if (hasUnknown) {
-        _lastDispenseMessage = 'Safety Alert: Previous dispense attempt for ${med.name} had an unknown outcome. Please check the tray manually before attempting another drop.';
+        _lastDispenseMessage = 'Safety Interlock: An earlier dispense attempt for ${med.name} had an unknown outcome. You must manually inspect the tray and acknowledge or clear it before another drop can be initiated.';
       } else {
         _lastDispenseMessage = 'Safety Alert: A dose of ${med.name} was already dispensed or is currently in-flight!';
       }

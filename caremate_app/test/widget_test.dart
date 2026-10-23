@@ -537,13 +537,14 @@ void main() {
       expect(provider.doseHistory.any((d) => d.medicationId == 'real_provider_med' && d.status == DoseStatus.scheduled), isFalse);
     });
 
-    test('MedicationProvider real method test: offline event deduplication preserves unique primary keys across app restart', () async {
+    test('MedicationProvider real method test: offline event deduplication preserves unique primary keys and higher-rank status even if out of order', () async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       final storage = StorageService(prefs);
       final ble = BleRobotService();
 
-      // Seed storage with duplicate IDs simulating corrupted disk sync or repeated restart
+      // Seed storage with out-of-order duplicate IDs:
+      // Earlier array item has later status (acknowledged), later array item has stale status (scheduled)
       final now = DateTime.now();
       final duplicateDoses = [
         DoseEvent(
@@ -553,16 +554,17 @@ void main() {
           dosage: '10mg',
           compartmentSlot: 1,
           scheduledTime: now,
-          status: DoseStatus.dispenseConfirmed,
+          acknowledgedTime: now.add(const Duration(minutes: 5)),
+          status: DoseStatus.acknowledged, // Rank 5 (highest)
         ),
         DoseEvent(
-          id: 'dup_dose_101', // Identical ID
+          id: 'dup_dose_101', // Out-of-order stale entry from earlier snapshot
           medicationId: 'm1',
           medicationName: 'Drug A',
           dosage: '10mg',
           compartmentSlot: 1,
           scheduledTime: now,
-          status: DoseStatus.acknowledged, // Later state
+          status: DoseStatus.scheduled, // Rank 0 (stale)
         ),
       ];
       await storage.saveDoseHistory(duplicateDoses);
@@ -570,13 +572,15 @@ void main() {
       final provider = MedicationProvider(storage, ble);
       await provider.loadData();
 
-      // Deduplication test: exactly 1 event exists for dup_dose_101
+      // Deduplication test: exactly 1 event exists
       expect(provider.doseHistory.where((d) => d.id == 'dup_dose_101').length, 1);
-      // Keeps the deduplicated entry
-      expect(provider.doseHistory.any((d) => d.id == 'dup_dose_101'), isTrue);
+      // Deterministic reconciliation test: higher-rank status (acknowledged) wins even though stale scheduled was read last
+      final resolved = provider.doseHistory.firstWhere((d) => d.id == 'dup_dose_101');
+      expect(resolved.status, DoseStatus.acknowledged);
+      expect(resolved.acknowledgedTime, isNotNull);
     });
 
-    test('MedicationProvider real method test: ambiguous UNKNOWN outcome blocks double dispense until manual check', () async {
+    test('MedicationProvider real method test: ambiguous UNKNOWN outcome blocks double dispense indefinitely past 45 minutes', () async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       final storage = StorageService(prefs);
@@ -595,21 +599,21 @@ void main() {
       // Force robot state to connected so connection guard passes
       await ble.connect(simulate: true);
 
-      // Simulate an ambiguous UNKNOWN dose from a previous timeout / disconnect
+      // Simulate an ambiguous UNKNOWN dose from 3 hours ago (well past the old 45 min window!)
       final unknownDose = DoseEvent(
         id: 'dose_prev_unknown',
         medicationId: 'med_safety_unknown',
         medicationName: 'Critical Heart Drug',
         dosage: '25 mg',
         compartmentSlot: 3,
-        scheduledTime: DateTime.now().subtract(const Duration(minutes: 5)),
+        scheduledTime: DateTime.now().subtract(const Duration(hours: 3)),
         status: DoseStatus.unknown,
         failureReason: 'ERR:BLE_TIMEOUT',
       );
       await storage.saveDoseHistory([unknownDose]);
       await provider.loadData();
 
-      // Attempting to re-dispense must be BLOCKED by safety guard 3
+      // Attempting to re-dispense must STILL be BLOCKED indefinitely until manual reconciliation
       final didDispense = await provider.dispenseMedication(med);
       expect(didDispense, isFalse);
       expect(provider.lastDispenseMessage?.contains('unknown outcome'), isTrue);
