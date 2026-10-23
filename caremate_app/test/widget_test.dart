@@ -435,6 +435,63 @@ void main() {
       // Verify: Other medications are unaffected
       expect(doses.any((d) => d.id == 'd_other_med'), isTrue);
     });
+
+    test('Medication update updates ONLY scheduled doses and strictly preserves in-flight commandSent events', () {
+      final now = DateTime.now();
+      final doses = [
+        DoseEvent(
+          id: 'd_inflight_1',
+          medicationId: 'med_update_target',
+          medicationName: 'Original Drug Name',
+          dosage: '500 mg',
+          compartmentSlot: 1,
+          scheduledTime: now,
+          commandSentTime: now,
+          status: DoseStatus.commandSent,
+        ),
+        DoseEvent(
+          id: 'd_pending_1',
+          medicationId: 'med_update_target',
+          medicationName: 'Original Drug Name',
+          dosage: '500 mg',
+          compartmentSlot: 1,
+          scheduledTime: now.add(const Duration(hours: 6)),
+          status: DoseStatus.scheduled,
+        ),
+      ];
+
+      final updatedMed = Medication(
+        id: 'med_update_target',
+        name: 'Updated Drug Name',
+        dosage: '1000 mg',
+        compartmentSlot: 2,
+        scheduleTimes: ['20:00'],
+      );
+
+      // Apply safe synchronization logic
+      for (int i = 0; i < doses.length; i++) {
+        if (doses[i].medicationId == updatedMed.id &&
+            doses[i].status == DoseStatus.scheduled) {
+          doses[i] = doses[i].copyWith(
+            medicationName: updatedMed.name,
+            dosage: updatedMed.dosage,
+            compartmentSlot: updatedMed.compartmentSlot,
+          );
+        }
+      }
+
+      // Verify: Scheduled future dose is properly updated
+      final pendingDose = doses.firstWhere((d) => d.id == 'd_pending_1');
+      expect(pendingDose.medicationName, 'Updated Drug Name');
+      expect(pendingDose.dosage, '1000 mg');
+      expect(pendingDose.compartmentSlot, 2);
+
+      // Verify CRITICAL safety rule: In-flight commandSent dose is NOT altered
+      final inFlightDose = doses.firstWhere((d) => d.id == 'd_inflight_1');
+      expect(inFlightDose.medicationName, 'Original Drug Name');
+      expect(inFlightDose.dosage, '500 mg');
+      expect(inFlightDose.compartmentSlot, 1);
+    });
   });
 }
 
