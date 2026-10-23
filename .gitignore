@@ -1,0 +1,36 @@
+# CAREMATE Root .gitignore
+
+# Large binary files & reference APKs
+*.xapk
+*.apk
+*.aab
+work_dir/
+outputs/*.apk
+
+# Flutter / Dart / Gradle build caches
+**/build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Android build outputs & local caches
+**/android/.gradle/
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# IDE & Editor folders
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.history/
+*.log
+
+# OS temporary files
+.DS_Store
+Thumbs.db

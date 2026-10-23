@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T23:25:00Z",
+  "title": "Design System: CAREMATE",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Medical Clinical Teal",
+        "canonical": "oklch(58% 0.14 185)",
+        "tonalRamp": [
+          "#042F2E",
+          "#115E59",
+          "#0F766E",
+          "#0D9488",
+          "#14B8A6",
+          "#2DD4BF",
+          "#99F6E4",
+          "#CCFBF1"
+        ]
+      },
+      "primary-dark": {
+        "role": "primary",
+        "displayName": "Deep Marine Teal",
+        "canonical": "oklch(48% 0.12 185)",
+        "tonalRamp": [
+          "#021C1B",
+          "#06443F",
+          "#0B5C55",
+          "#0F766E",
+          "#149187",
+          "#1AB2A5",
+          "#5CE0D4",
+          "#A7F3EC"
+        ]
+      },
+      "primary-accent": {
+        "role": "primary",
+        "displayName": "Vibrant Teal Accent",
+        "canonical": "oklch(68% 0.15 180)",
+        "tonalRamp": [
+          "#042F2E",
+          "#0D655E",
+          "#0F837A",
+          "#14B8A6",
+          "#2DD4BF",
+          "#5EEAD4",
+          "#99F6E4",
+          "#E6FFFA"
+        ]
+      },
+      "primary-light": {
+        "role": "primary",
+        "displayName": "Mint Surface Light",
+        "canonical": "oklch(95% 0.04 180)",
+        "tonalRamp": [
+          "#115E59",
+          "#0D9488",
+          "#2DD4BF",
+          "#5EEAD4",
+          "#99F6E4",
+          "#CCFBF1",
+          "#E6FFFA",
+          "#F0FDFA"
+        ]
+      },
+      "status-scheduled": {
+        "role": "secondary",
+        "displayName": "Scheduled Blue",
+        "canonical": "oklch(62% 0.18 250)",
+        "tonalRamp": [
+          "#1E3A8A",
+          "#1D4ED8",
+          "#2563EB",
+          "#3B82F6",
+          "#60A5FA",
+          "#93C5FD",
+          "#BFDBFE",
+          "#EFF6FF"
+        ]
+      },
+      "status-command-sent": {
+        "role": "secondary",
+        "displayName": "Command Dispatched Violet",
+        "canonical": "oklch(55% 0.22 290)",
+        "tonalRamp": [
+          "#4C1D95",
+          "#6D28D9",
+          "#7C3AED",
+          "#8B5CF6",
+          "#A78BFA",
+          "#C4B5FD",
+          "#DDD6FE",
+          "#F3E8FF"
+        ]
+      },
+      "status-dispensed": {
+        "role": "secondary",
+        "displayName": "Dispense Confirmed Emerald",
+        "canonical": "oklch(65% 0.19 155)",
+        "tonalRamp": [
+          "#064E3B",
+          "#047857",
+          "#059669",
+          "#10B981",
+          "#34D399",
+          "#6EE7B7",
+          "#A7F3D0",
+          "#D1FAE5"
+        ]
+      },
+      "status-acknowledged": {
+        "role": "secondary",
+        "displayName": "Patient Acknowledged Forest",
+        "canonical": "oklch(52% 0.15 155)",
+        "tonalRamp": [
+          "#022C22",
+          "#064E3B",
+          "#047857",
+          "#059669",
+          "#10B981",
+          "#34D399",
+          "#A7F3D0",
+          "#ECFDF5"
+        ]
+      },
+      "status-failed": {
+        "role": "secondary",
+        "displayName": "Safety Fault Crimson",
+        "canonical": "oklch(55% 0.22 25)",
+        "tonalRamp": [
+          "#7F1D1D",
+          "#B91C1C",
+          "#DC2626",
+          "#EF4444",
+          "#F87171",
+          "#FCA5A5",
+          "#FECACA",
+          "#FEE2E2"
+        ]
+      },
+      "status-warning": {
+        "role": "secondary",
+        "displayName": "Cautionary Amber",
+        "canonical": "oklch(72% 0.17 65)",
+        "tonalRamp": [
+          "#78350F",
+          "#B45309",
+          "#D97706",
+          "#F59E0B",
+          "#FBBF24",
+          "#FCD34D",
+          "#FDE68A",
+          "#FEF3C7"
+        ]
+      },
+      "status-unknown": {
+        "role": "secondary",
+        "displayName": "Disconnected Gray",
+        "canonical": "oklch(50% 0.02 240)",
+        "tonalRamp": [
+          "#111827",
+          "#1F2937",
+          "#374151",
+          "#4B5563",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Slate Canvas Light",
+        "canonical": "oklch(98% 0.005 240)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F8FAFC"
+        ]
+      },
+      "neutral-surface": {
+        "role": "neutral",
+        "displayName": "Pure White Surface",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#475569",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F1F5F9",
+          "#FFFFFF"
+        ]
+      },
+      "neutral-border": {
+        "role": "neutral",
+        "displayName": "Structural Border Light",
+        "canonical": "oklch(92% 0.01 240)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#475569",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F8FAFC"
+        ]
+      },
+      "neutral-text": {
+        "role": "neutral",
+        "displayName": "Deep Slate Body Text",
+        "canonical": "oklch(18% 0.03 260)",
+        "tonalRamp": [
+          "#020617",
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#475569",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1"
+        ]
+      },
+      "neutral-muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate Subtitle",
+        "canonical": "oklch(50% 0.04 250)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#475569",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#F1F5F9"
+        ]
+      },
+      "dark-bg": {
+        "role": "neutral",
+        "displayName": "Obsidian Dark Canvas",
+        "canonical": "oklch(12% 0.03 245)",
+        "tonalRamp": [
+          "#050B14",
+          "#0B1320",
+          "#152238",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#E2E8F0"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "Navy Slate Card Dark",
+        "canonical": "oklch(20% 0.04 245)",
+        "tonalRamp": [
+          "#0B1320",
+          "#111C2E",
+          "#152238",
+          "#1C2C48",
+          "#283C60",
+          "#475569",
+          "#94A3B8",
+          "#CBD5E1"
+        ]
+      },
+      "dark-border": {
+        "role": "neutral",
+        "displayName": "Structural Border Dark",
+        "canonical": "oklch(25% 0.03 250)",
+        "tonalRamp": [
+          "#0F172A",
+          "#152238",
+          "#1E293B",
+          "#334155",
+          "#475569",
+          "#64748B",
+          "#94A3B8",
+          "#E2E8F0"
+        ]
+      },
+      "dark-text": {
+        "role": "neutral",
+        "displayName": "Pure White Text Dark",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F8FAFC",
+          "#FFFFFF"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate Dark",
+        "canonical": "oklch(70% 0.03 245)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F8FAFC"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Hero",
+        "purpose": "Screen hero titles, big time badges, and major metrics."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Modal sheet headers, vital reading values, and primary alerts."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Medication names, card headers, and compartment labels."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Prescription instructions, clinical summaries, and chat advice."
+      },
+      "label": {
+        "displayName": "Label / Caption",
+        "purpose": "Status pills, timestamps, units, and tab bar captions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface-lift",
+        "value": "0 4px 12px rgba(15, 23, 42, 0.05)",
+        "purpose": "Elevated modal sheets and emergency dialogs."
+      },
+      {
+        "name": "hardware-halo",
+        "value": "0 0 16px rgba(13, 148, 136, 0.25)",
+        "purpose": "Active servo slot indicator and live BLE connected state."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Standard Flutter Material 3 curve for card transitions."
+      },
+      {
+        "name": "duration-fast",
+        "value": "200ms",
+        "purpose": "Button hover and badge state switches."
+      },
+      {
+        "name": "duration-carousel",
+        "value": "600ms",
+        "purpose": "Carousel rotation interpolation between slot indices."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "0px"
+      },
+      {
+        "name": "tablet",
+        "value": "600px"
+      },
+      {
+        "name": "desktop",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary clinical action button (e.g. Dispense Now, Save Schedule). Minimum 48dp height.",
+      "html": "<button class=\"ds-btn-primary\"><svg class=\"ds-btn-icon\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z\"/></svg><span>DISPENSE NOW</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #0D9488; color: #FFFFFF; font-family: Outfit, sans-serif; font-size: 15px; font-weight: 600; min-height: 48px; padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; } .ds-btn-primary:hover { background: #0F766E; } .ds-btn-primary:focus-visible { outline: 2px solid #0D9488; outline-offset: 2px; } .ds-btn-icon { width: 18px; height: 18px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary outlined action button (e.g. Test Rotate, Align Slot).",
+      "html": "<button class=\"ds-btn-secondary\"><svg class=\"ds-btn-icon\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z\"/></svg><span>ALIGN CAROUSEL</span></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: transparent; color: #0D9488; font-family: Outfit, sans-serif; font-size: 15px; font-weight: 600; min-height: 48px; padding: 12px 24px; border: 1.5px solid #0D9488; border-radius: 12px; cursor: pointer; transition: background 0.2s; } .ds-btn-secondary:hover { background: #CCFBF1; } .ds-btn-secondary:focus-visible { outline: 2px solid #0D9488; outline-offset: 2px; } .ds-btn-icon { width: 18px; height: 18px; }"
+    },
+    {
+      "name": "Emergency SOS Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "High-urgency emergency dispatch button for clinical triage and family SOS.",
+      "html": "<button class=\"ds-btn-danger\"><svg class=\"ds-btn-icon\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z\"/></svg><span>EMERGENCY SOS (112)</span></button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #EF4444; color: #FFFFFF; font-family: Outfit, sans-serif; font-size: 15px; font-weight: 700; min-height: 48px; padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s; } .ds-btn-danger:hover { background: #DC2626; } .ds-btn-danger:focus-visible { outline: 2px solid #EF4444; outline-offset: 2px; } .ds-btn-icon { width: 18px; height: 18px; }"
+    },
+    {
+      "name": "Dose Status Badge",
+      "kind": "chip",
+      "refersTo": "chip-status",
+      "description": "Truthful pill badge reflecting precise medication state machine phase.",
+      "html": "<span class=\"ds-badge-dispensed\"><svg class=\"ds-badge-icon\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/></svg><span>DISPENSED</span></span>",
+      "css": ".ds-badge-dispensed { display: inline-flex; align-items: center; gap: 6px; background: #D1FAE5; color: #047857; font-family: Outfit, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.35); } .ds-badge-icon { width: 14px; height: 14px; }"
+    },
+    {
+      "name": "Vital Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Clinical telemetry card displaying vital readings, clinical status, and simulation tags.",
+      "html": "<div class=\"ds-vital-card\"><div class=\"ds-vital-left\"><div class=\"ds-vital-icon-box\"><svg class=\"ds-vital-icon\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\"/></svg></div><div><div class=\"ds-vital-header\"><span class=\"ds-vital-title\">Blood Pressure</span><span class=\"ds-sim-tag\">Simulated</span></div><div class=\"ds-vital-value\">122/80 <span class=\"ds-vital-unit\">mmHg</span></div><div class=\"ds-vital-provenance\">Simulated Clinical Profile (Demo)</div></div></div><div class=\"ds-vital-right\"><span class=\"ds-vital-status-pill\">Normal</span><span class=\"ds-vital-time\">08:00 AM</span></div></div>",
+      "css": ".ds-vital-card { display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 16px; font-family: Inter, sans-serif; } .ds-vital-left { display: flex; align-items: center; gap: 14px; } .ds-vital-icon-box { width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; } .ds-vital-icon { width: 24px; height: 24px; } .ds-vital-header { display: flex; align-items: center; gap: 6px; } .ds-vital-title { font-size: 13px; font-weight: 600; color: #64748B; font-family: Outfit, sans-serif; } .ds-sim-tag { background: rgba(245, 158, 11, 0.15); color: #B45309; border: 0.5px solid #D97706; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; } .ds-vital-value { font-size: 20px; font-weight: 800; color: #0F172A; font-family: Outfit, sans-serif; } .ds-vital-unit { font-size: 12px; font-weight: 500; color: #64748B; } .ds-vital-provenance { font-size: 10px; color: #64748B; font-style: italic; } .ds-vital-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; } .ds-vital-status-pill { background: #CCFBF1; color: #0F766E; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; font-family: Outfit, sans-serif; } .ds-vital-time { font-size: 11px; color: #94A3B8; }"
+    },
+    {
+      "name": "Carousel Slot Indicator",
+      "kind": "custom",
+      "refersTo": "carousel-slot",
+      "description": "Individual 60-degree compartment in the 6-slot robot carousel. Minimum 50x50 touch boundary.",
+      "html": "<div class=\"ds-slot-active\" role=\"button\" aria-label=\"Slot 1: Active Dispensing Position, Metformin 500mg, 1 tablet\"><span class=\"ds-slot-num\">1</span><span class=\"ds-slot-sub\">ACTIVE</span></div>",
+      "css": ".ds-slot-active { width: 52px; height: 52px; border-radius: 50%; background: #CCFBF1; border: 2.5px solid #0D9488; color: #0F766E; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: Outfit, sans-serif; box-shadow: 0 0 12px rgba(13, 148, 136, 0.3); cursor: pointer; } .ds-slot-num { font-size: 16px; font-weight: 800; line-height: 1; } .ds-slot-sub { font-size: 8px; font-weight: 700; letter-spacing: 0.05em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Reassuring Clinical Companion",
+    "overview": "CAREMATE bridges physical robotics and clinical pharmacotherapy for elderly patients and remote caregivers. The visual language balances hospital-grade clinical authority with the warmth and emotional reassurance required in a domestic living space. It replaces cold utilitarianism with soothing deep teals, slate neutrals, crisp typography, and high-visibility physical states.\n\nThe interface prioritizes cognitive ease for older adults while providing dense, actionable telemetry for caregivers. Every visual state corresponds to verified physical hardware reality: scheduled doses are visually distinct from command transmission, mechanical dispensing is never conflated with ingestion, and simulated data is unmistakably distinguished from real BLE vitals.",
+    "keyCharacteristics": [
+      "Clinical Calm: Deep medical teal (#0D9488) anchors primary interactive workflows, instilling confidence without alarm fatigue.",
+      "Truthful State Encodings: Distinct, non-overlapping semantic status colors for every phase of medication delivery.",
+      "Dignified Accessibility: High legibility via Google Fonts Outfit and Inter, with enforced 48×48 dp touch minimums and high-contrast fallbacks.",
+      "Surface Restraint: Flat surfaces with subtle 1 dp structural borders, reserving luminous glow effects exclusively for live hardware connectivity."
+    ],
+    "rules": [
+      {
+        "name": "The Truth In Color Rule",
+        "body": "No action or event may borrow a status color outside its verified stage. Never use Emerald (#10B981) for a scheduled or dispatched command until the IR drop sensor fires.",
+        "section": "colors"
+      },
+      {
+        "name": "The Amber Simulation Rule",
+        "body": "Any metric, vitals record, or telemetry packet generated via software simulation rather than physical BLE hardware must bear an Amber cautionary label (#F59E0B).",
+        "section": "colors"
+      },
+      {
+        "name": "The Senior Legibility Rule",
+        "body": "Patient-facing labels and reminders must never render below 14px in body copy and 20px in time titles. Contrast must always meet or exceed WCAG AAA (7.0:1) on patient screens.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Mystery Metric Rule",
+        "body": "Every numerical reading (heart rate, blood pressure, angle) must explicitly declare its clinical unit (mmHg, bpm, %, °) in an adjacent 12px muted label.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces never cast structural drop shadows at rest. Depth is established through 1dp borders (#E2E8F0 / #1E293B).",
+        "section": "elevation"
+      },
+      {
+        "name": "The Emergency Elevation Rule",
+        "body": "Only the emergency SOS call sheet and hardware fault dialogs may break the flat surface hierarchy with an overlay barrier and elevated depth.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do maintain a strict 48×48 dp minimum touch target for all buttons, toggles, and carousel slots.",
+      "Do explicitly mark simulated vitals or test telemetries with the Amber \"Simulated\" badge.",
+      "Do use Google Fonts Outfit for headings and Inter for body text to preserve typographic clarity.",
+      "Do enforce 1dp hairline borders (#E2E8F0 / #1E293B) for card surfaces rather than fuzzy drop shadows.",
+      "Do preserve the strict medication state lifecycle (SCHEDULED ➔ COMMAND_SENT ➔ DISPENSE_CONFIRMED ➔ ACKNOWLEDGED)."
+    ],
+    "donts": [
+      "Don't use generic unbranded blue (#0000FF) or plain red (#FF0000); use curated tokens #0D9488, #3B82F6, #EF4444.",
+      "Don't mark a medication as \"Dispensed\" simply because the BLE command was dispatched to the robot.",
+      "Don't shrink body copy below 14px on senior patient screens.",
+      "Don't add gratuitous 3D transforms, bouncy spring animations, or heavy blurs that increase cognitive friction.",
+      "Don't invent BLE hardware verification when running in simulation mode."
+    ]
+  }
+}
