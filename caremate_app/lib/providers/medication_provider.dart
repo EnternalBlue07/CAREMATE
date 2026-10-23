@@ -279,6 +279,20 @@ class MedicationProvider extends ChangeNotifier {
     if (idx != -1) {
       _medications[idx] = med;
       await _storageService.saveMedications(_medications);
+
+      // Synchronize active and future scheduled dose events with updated name, dosage, and slot
+      for (int i = 0; i < _doseHistory.length; i++) {
+        if (_doseHistory[i].medicationId == med.id &&
+            (_doseHistory[i].status == DoseStatus.scheduled ||
+             _doseHistory[i].status == DoseStatus.commandSent)) {
+          _doseHistory[i] = _doseHistory[i].copyWith(
+            medicationName: med.name,
+            dosage: med.dosage,
+            compartmentSlot: med.compartmentSlot,
+          );
+        }
+      }
+      await _storageService.saveDoseHistory(_doseHistory);
       notifyListeners();
     }
   }
@@ -286,6 +300,13 @@ class MedicationProvider extends ChangeNotifier {
   Future<void> deleteMedication(String medId) async {
     _medications.removeWhere((m) => m.id == medId);
     await _storageService.saveMedications(_medications);
+
+    // Cancel and remove only pending scheduled doses so they don't corrupt adherence metrics;
+    // preserve historical completed doses (acknowledged, dispenseConfirmed, failed, unknown) for clinical audit trails
+    _doseHistory.removeWhere((d) =>
+      d.medicationId == medId && d.status == DoseStatus.scheduled
+    );
+    await _storageService.saveDoseHistory(_doseHistory);
     notifyListeners();
   }
 }

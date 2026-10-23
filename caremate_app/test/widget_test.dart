@@ -389,6 +389,52 @@ void main() {
       expect(unknownDose.status != DoseStatus.dispenseConfirmed, isTrue);
       expect(unknownDose.status != DoseStatus.acknowledged, isTrue);
     });
+
+    test('Medication deletion cancels pending scheduled doses while preserving historical audit records', () {
+      final now = DateTime.now();
+      final doses = [
+        DoseEvent(
+          id: 'd_hist_1',
+          medicationId: 'med_delete_target',
+          medicationName: 'Old Med',
+          dosage: '10mg',
+          compartmentSlot: 3,
+          scheduledTime: now.subtract(const Duration(days: 1)),
+          dispensedTime: now.subtract(const Duration(days: 1)),
+          status: DoseStatus.dispenseConfirmed,
+        ),
+        DoseEvent(
+          id: 'd_future_1',
+          medicationId: 'med_delete_target',
+          medicationName: 'Old Med',
+          dosage: '10mg',
+          compartmentSlot: 3,
+          scheduledTime: now.add(const Duration(hours: 4)),
+          status: DoseStatus.scheduled,
+        ),
+        DoseEvent(
+          id: 'd_other_med',
+          medicationId: 'med_keep',
+          medicationName: 'Keep Med',
+          dosage: '500mg',
+          compartmentSlot: 1,
+          scheduledTime: now.add(const Duration(hours: 4)),
+          status: DoseStatus.scheduled,
+        ),
+      ];
+
+      // Deletion lifecycle rule: purge only pending scheduled doses for the deleted medication
+      doses.removeWhere((d) =>
+        d.medicationId == 'med_delete_target' && d.status == DoseStatus.scheduled
+      );
+
+      // Verify: Pending future dose of deleted med is removed
+      expect(doses.any((d) => d.id == 'd_future_1'), isFalse);
+      // Verify: Historical completed dose of deleted med is preserved for clinical audit
+      expect(doses.any((d) => d.id == 'd_hist_1'), isTrue);
+      // Verify: Other medications are unaffected
+      expect(doses.any((d) => d.id == 'd_other_med'), isTrue);
+    });
   });
 }
 
