@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:caremate_app/models/medication.dart';
 import 'package:caremate_app/models/dose_event.dart';
 import 'package:caremate_app/models/vital_reading.dart';
+import 'package:caremate_app/services/storage_service.dart';
+import 'package:caremate_app/services/ble_robot_service.dart';
+import 'package:caremate_app/providers/medication_provider.dart';
 import 'package:caremate_app/services/medical_reference_service.dart';
 import 'package:caremate_app/services/ai_companion_service.dart';
 import 'package:caremate_app/widgets/carousel_visualizer.dart';
@@ -491,6 +495,124 @@ void main() {
       expect(inFlightDose.medicationName, 'Original Drug Name');
       expect(inFlightDose.dosage, '500 mg');
       expect(inFlightDose.compartmentSlot, 1);
+    });
+
+    test('MedicationProvider real method test: updateMedication & deleteMedication exercise actual production methods', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final storage = StorageService(prefs);
+      final ble = BleRobotService();
+      final provider = MedicationProvider(storage, ble);
+      await provider.loadData();
+
+      final med = Medication(
+        id: 'real_provider_med',
+        name: 'Metformin',
+        dosage: '500 mg',
+        compartmentSlot: 1,
+        scheduleTimes: ['08:00'],
+      );
+
+      await provider.addMedication(med);
+      expect(provider.medications.any((m) => m.id == 'real_provider_med'), isTrue);
+      expect(provider.doseHistory.any((d) => d.medicationId == 'real_provider_med'), isTrue);
+
+      // Now update medication using actual production updateMedication method
+      final updatedMed = med.copyWith(
+        name: 'Metformin XR',
+        dosage: '1000 mg',
+        compartmentSlot: 2,
+      );
+      await provider.updateMedication(updatedMed);
+
+      final updatedDose = provider.doseHistory.firstWhere((d) => d.medicationId == 'real_provider_med');
+      expect(updatedDose.medicationName, 'Metformin XR');
+      expect(updatedDose.dosage, '1000 mg');
+      expect(updatedDose.compartmentSlot, 2);
+
+      // Now delete medication using actual production deleteMedication method
+      await provider.deleteMedication('real_provider_med');
+      expect(provider.medications.any((m) => m.id == 'real_provider_med'), isFalse);
+      // Scheduled dose must be cancelled and purged
+      expect(provider.doseHistory.any((d) => d.medicationId == 'real_provider_med' && d.status == DoseStatus.scheduled), isFalse);
+    });
+
+    test('MedicationProvider real method test: offline event deduplication preserves unique primary keys across app restart', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final storage = StorageService(prefs);
+      final ble = BleRobotService();
+
+      // Seed storage with duplicate IDs simulating corrupted disk sync or repeated restart
+      final now = DateTime.now();
+      final duplicateDoses = [
+        DoseEvent(
+          id: 'dup_dose_101',
+          medicationId: 'm1',
+          medicationName: 'Drug A',
+          dosage: '10mg',
+          compartmentSlot: 1,
+          scheduledTime: now,
+          status: DoseStatus.dispenseConfirmed,
+        ),
+        DoseEvent(
+          id: 'dup_dose_101', // Identical ID
+          medicationId: 'm1',
+          medicationName: 'Drug A',
+          dosage: '10mg',
+          compartmentSlot: 1,
+          scheduledTime: now,
+          status: DoseStatus.acknowledged, // Later state
+        ),
+      ];
+      await storage.saveDoseHistory(duplicateDoses);
+
+      final provider = MedicationProvider(storage, ble);
+      await provider.loadData();
+
+      // Deduplication test: exactly 1 event exists for dup_dose_101
+      expect(provider.doseHistory.where((d) => d.id == 'dup_dose_101').length, 1);
+      // Keeps the deduplicated entry
+      expect(provider.doseHistory.any((d) => d.id == 'dup_dose_101'), isTrue);
+    });
+
+    test('MedicationProvider real method test: ambiguous UNKNOWN outcome blocks double dispense until manual check', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final storage = StorageService(prefs);
+      final ble = BleRobotService();
+      final provider = MedicationProvider(storage, ble);
+
+      final med = Medication(
+        id: 'med_safety_unknown',
+        name: 'Critical Heart Drug',
+        dosage: '25 mg',
+        compartmentSlot: 3,
+        scheduleTimes: ['10:00'],
+      );
+      await provider.addMedication(med);
+
+      // Force robot state to connected so connection guard passes
+      await ble.connect(simulate: true);
+
+      // Simulate an ambiguous UNKNOWN dose from a previous timeout / disconnect
+      final unknownDose = DoseEvent(
+        id: 'dose_prev_unknown',
+        medicationId: 'med_safety_unknown',
+        medicationName: 'Critical Heart Drug',
+        dosage: '25 mg',
+        compartmentSlot: 3,
+        scheduledTime: DateTime.now().subtract(const Duration(minutes: 5)),
+        status: DoseStatus.unknown,
+        failureReason: 'ERR:BLE_TIMEOUT',
+      );
+      await storage.saveDoseHistory([unknownDose]);
+      await provider.loadData();
+
+      // Attempting to re-dispense must be BLOCKED by safety guard 3
+      final didDispense = await provider.dispenseMedication(med);
+      expect(didDispense, isFalse);
+      expect(provider.lastDispenseMessage?.contains('unknown outcome'), isTrue);
     });
   });
 }

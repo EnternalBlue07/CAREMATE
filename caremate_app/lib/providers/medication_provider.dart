@@ -29,7 +29,14 @@ class MedicationProvider extends ChangeNotifier {
     notifyListeners();
     try {
       _medications = await _storageService.loadMedications();
-      _doseHistory = await _storageService.loadDoseHistory();
+      final loadedDoses = await _storageService.loadDoseHistory();
+
+      // Event Deduplication: Ensure unique primary keys across app restarts & persistent storage
+      final Map<String, DoseEvent> uniqueMap = {};
+      for (final dose in loadedDoses) {
+        uniqueMap[dose.id] = dose;
+      }
+      _doseHistory = uniqueMap.values.toList();
       _sortDoses();
     } finally {
       _isLoading = false;
@@ -120,20 +127,30 @@ class MedicationProvider extends ChangeNotifier {
       return false;
     }
 
-    // Safety Guard 3: Duplicate-Command Protection
+    // Safety Guard 3: Duplicate-Command Protection & Ambiguous Outcome Interlock
     final now = DateTime.now();
-    final recentInFlight = _doseHistory.where((d) {
+    final ambiguousOrRecent = _doseHistory.where((d) {
       if (d.medicationId != med.id) return false;
       if (d.status == DoseStatus.commandSent) return true;
       if (d.status == DoseStatus.dispenseConfirmed && d.dispensedTime != null) {
         // Guard against double dispensing within 45 minutes
         return now.difference(d.dispensedTime!).inMinutes < 45;
       }
+      if (d.status == DoseStatus.unknown) {
+        // Strict Hardware Rule: Never retry a potentially completed dispense blindly.
+        // Ambiguous timeout requires manual human inspection.
+        return now.difference(d.scheduledTime).inMinutes < 45;
+      }
       return false;
     }).toList();
 
-    if (recentInFlight.isNotEmpty) {
-      _lastDispenseMessage = 'Safety Alert: A dose of ${med.name} was already dispensed or is currently in-flight!';
+    if (ambiguousOrRecent.isNotEmpty) {
+      final hasUnknown = ambiguousOrRecent.any((d) => d.status == DoseStatus.unknown);
+      if (hasUnknown) {
+        _lastDispenseMessage = 'Safety Alert: Previous dispense attempt for ${med.name} had an unknown outcome. Please check the tray manually before attempting another drop.';
+      } else {
+        _lastDispenseMessage = 'Safety Alert: A dose of ${med.name} was already dispensed or is currently in-flight!';
+      }
       notifyListeners();
       return false;
     }
